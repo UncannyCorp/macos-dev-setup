@@ -2,18 +2,22 @@
 set -euo pipefail
 
 ###############################################################################
-# Fresh macOS Dev Setup (Homebrew + Tabby + NVM + Node v24 + pnpm + Colima etc.)
+# macOS Dev Setup (Tabby, NVM, Node v24, pnpm, Colima, etc. via Homebrew)
 #
-# Usage:
-#   1) Save as: setup-dev-macos.sh
-#   2) Run:    chmod +x setup-dev-macos.sh && ./setup-dev-macos.sh
+# Requirement: Homebrew must be installed first.
+# Usage: curl -fsSL https://raw.githubusercontent.com/UncannyCorp/macos-dev-setup/main/install.sh | bash
 #
 # Notes:
-# - This script assumes zsh (default on macOS).
-# - It will modify ~/.zprofile (PATH) and ~/.zshrc (nvm init).
+# - Assumes zsh (default on macOS). Modifies ~/.zprofile and ~/.zshrc.
 ###############################################################################
 
 echo "==> Starting macOS dev environment setup..."
+
+if ! command -v brew >/dev/null 2>&1; then
+  echo "Homebrew is required. Install it first, then run this script again:" >&2
+  echo "  /bin/bash -c \"\$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\"" >&2
+  exit 1
+fi
 
 # Detect architecture for Homebrew path
 ARCH="$(uname -m)"
@@ -35,28 +39,21 @@ ensure_line_in_file() {
   fi
 }
 
-echo "==> 1) Installing Xcode Command Line Tools (if needed)..."
+echo "==> 0) Xcode Command Line Tools (if needed)..."
 if ! xcode-select -p >/dev/null 2>&1; then
   xcode-select --install || true
   echo "    - If a popup appeared, complete the installation, then re-run this script."
-  # Don't hard fail here because the installer is interactive and may already be in progress.
 fi
 
-echo "==> 2) Installing Homebrew (if needed)..."
-if ! command -v brew >/dev/null 2>&1; then
-  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-fi
-
-echo "==> 3) Ensuring Homebrew is on PATH..."
+echo "==> 1) Ensuring Homebrew is on PATH..."
 BREW_SHELLENV_LINE="eval \"\$(${BREW_PREFIX}/bin/brew shellenv)\""
 ensure_line_in_file "$BREW_SHELLENV_LINE" "$ZPROFILE"
-# Load for current session
 eval "$(${BREW_PREFIX}/bin/brew shellenv)"
 
-echo "==> 4) Updating Homebrew..."
+echo "==> 2) Updating Homebrew..."
 brew update
 
-echo "==> 5) Installing core CLI tools..."
+echo "==> 3) Installing core CLI tools..."
 brew install \
   git \
   wget \
@@ -76,22 +73,22 @@ brew install \
   gnupg \
   openssl@3
 
-echo "==> 6) Installing GUI apps (casks)..."
+echo "==> 4) Installing GUI apps (casks)..."
 brew install --cask \
   github \
   tabby
 
-echo "==> 7) Installing Colima + Docker CLI (no Docker Desktop)..."
+echo "==> 5) Installing Colima + Docker CLI (no Docker Desktop)..."
 brew install colima docker docker-compose
 # Start Colima if not running
 if ! colima status >/dev/null 2>&1; then
   colima start
 fi
 
-echo "==> 8) Installing NVM (Node Version Manager)..."
+echo "==> 6) Installing NVM (Node Version Manager)..."
 brew install nvm
 
-echo "==> 9) Configuring NVM in zsh..."
+echo "==> 7) Configuring NVM in zsh..."
 mkdir -p "$HOME/.nvm"
 
 ensure_line_in_file 'export NVM_DIR="$HOME/.nvm"' "$ZSHRC"
@@ -111,17 +108,16 @@ if [[ -s "${BREW_PREFIX}/opt/nvm/etc/bash_completion.d/nvm" ]]; then
   . "${BREW_PREFIX}/opt/nvm/etc/bash_completion.d/nvm"
 fi
 
-echo "==> 10) Installing Node.js v24 and setting it as default..."
+echo "==> 8) Installing Node.js v24 and setting it as default..."
 nvm install 24
 nvm use 24
 nvm alias default 24
 
-echo "==> 11) Installing pnpm..."
-# Recommended: enable Corepack (ships with Node) and use it to install pnpm cleanly
+echo "==> 9) Installing pnpm..."
 corepack enable
 corepack prepare pnpm@latest --activate
 
-echo "==> 12) Quick verification..."
+echo "==> 10) Quick verification..."
 echo "---- Versions ----"
 git --version || true
 brew --version || true

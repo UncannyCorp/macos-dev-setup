@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>macOS Dev Setup – One-command install</title>
+  <title>macOS Dev Setup</title>
   <style>
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -35,20 +35,24 @@
 </head>
 <body>
   <h1>🍎 macOS Dev Setup</h1>
-  <p class="subtitle">One-command dev environment setup on macOS: Homebrew, CLI tools, Tabby, Docker (Colima), Node.js 24, and pnpm.</p>
+  <p class="subtitle">Dev environment setup on macOS: CLI tools, Tabby, Docker (Colima), Node.js 24, pnpm. Uses Homebrew.</p>
 
-  <h2>⚡ One-command install</h2>
-  <p>Paste this into Terminal (replace <code>UncannyCorp</code> with your GitHub username or org):</p>
+  <h2>Requirements</h2>
+  <p>Homebrew (install first if needed):</p>
+  <pre><code>/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"</code></pre>
+
+  <h2>Installation</h2>
+  <p>Replace <code>UncannyCorp</code> with your GitHub username or org:</p>
   <pre><code>curl -fsSL https://raw.githubusercontent.com/UncannyCorp/macos-dev-setup/main/install.sh | bash</code></pre>
-  <p class="note">Requires macOS and zsh (default shell). The script may prompt for Xcode Command Line Tools; complete that, then re-run if needed.</p>
 
-  <h2>📦 What gets installed</h2>
+  <h2>What gets installed</h2>
   <ul>
-    <li><strong>CLI:</strong> Xcode Command Line Tools, Homebrew, git, wget, curl, jq, yq, tree, ripgrep, fd, fzf, htop, btop, tmux, watch, unzip, p7zip, gnupg, openssl</li>
+    <li><strong>CLI:</strong> git, wget, curl, jq, yq, tree, ripgrep, fd, fzf, htop, btop, tmux, watch, unzip, p7zip, gnupg, openssl</li>
     <li><strong>GUI (casks):</strong> GitHub Desktop, Tabby terminal</li>
     <li><strong>Containers:</strong> Colima, Docker CLI, docker-compose (no Docker Desktop)</li>
     <li><strong>Node:</strong> NVM, Node.js 24, pnpm (via Corepack)</li>
   </ul>
+  <p class="note">The script may trigger Xcode Command Line Tools; complete that, then re-run if needed.</p>
 
   <p class="repo-link">
     <a href="https://github.com/UncannyCorp/macos-dev-setup">View on GitHub</a> ·
