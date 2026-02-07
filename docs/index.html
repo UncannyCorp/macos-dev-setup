@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>macOS Dev Setup – One-command install</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      line-height: 1.6;
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+      color: #24292f;
+      background: #ffffff;
+    }
+    h1 { font-size: 1.75rem; margin-top: 0; }
+    .subtitle { color: #57606a; margin-bottom: 1.5rem; }
+    pre {
+      background: #f6f8fa;
+      border: 1px solid #d0d7de;
+      border-radius: 6px;
+      padding: 1rem;
+      overflow-x: auto;
+      font-size: 0.9rem;
+    }
+    code { font-family: ui-monospace, monospace; }
+    .note { font-size: 0.9rem; color: #57606a; margin-top: 0.5rem; }
+    h2 { font-size: 1.15rem; margin-top: 1.5rem; }
+    ul { padding-left: 1.25rem; }
+    a { color: #0969da; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .repo-link { margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #d0d7de; }
+  </style>
+</head>
+<body>
+  <h1>🍎 macOS Dev Setup</h1>
+  <p class="subtitle">One-command dev environment setup on macOS: Homebrew, CLI tools, Tabby, Docker (Colima), Node.js 24, and pnpm.</p>
+
+  <h2>⚡ One-command install</h2>
+  <p>Paste this into Terminal (replace <code>UncannyCorp</code> with your GitHub username or org):</p>
+  <pre><code>curl -fsSL https://raw.githubusercontent.com/UncannyCorp/macos-dev-setup/main/install.sh | bash</code></pre>
+  <p class="note">Requires macOS and zsh (default shell). The script may prompt for Xcode Command Line Tools; complete that, then re-run if needed.</p>
+
+  <h2>📦 What gets installed</h2>
+  <ul>
+    <li><strong>CLI:</strong> Xcode Command Line Tools, Homebrew, git, wget, curl, jq, yq, tree, ripgrep, fd, fzf, htop, btop, tmux, watch, unzip, p7zip, gnupg, openssl</li>
+    <li><strong>GUI (casks):</strong> GitHub Desktop, Tabby terminal</li>
+    <li><strong>Containers:</strong> Colima, Docker CLI, docker-compose (no Docker Desktop)</li>
+    <li><strong>Node:</strong> NVM, Node.js 24, pnpm (via Corepack)</li>
+  </ul>
+
+  <p class="repo-link">
+    <a href="https://github.com/UncannyCorp/macos-dev-setup">View on GitHub</a> ·
+    <a href="https://github.com/UncannyCorp/macos-dev-setup/blob/main/README.md">README</a>
+  </p>
+</body>
+</html>
