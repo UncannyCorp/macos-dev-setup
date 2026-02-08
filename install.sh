@@ -112,14 +112,16 @@ brew install nvm
 echo "==> 7) Configuring NVM in zsh (.zshenv, .zprofile, .zshrc so it works in every terminal)..."
 mkdir -p "$HOME/.nvm"
 
-NVM_SH="${BREW_PREFIX}/opt/nvm/nvm.sh"
-NVM_COMPLETION="${BREW_PREFIX}/opt/nvm/etc/bash_completion.d/nvm"
-
-# .zshenv is read by every zsh (login + non-login), so NVM is always available
+# Exact block recommended by Homebrew nvm formula (single [ ] for portability, with comments)
+NVM_BLOCK_LINES=(
+  'export NVM_DIR="$HOME/.nvm"'
+  "[ -s \"${BREW_PREFIX}/opt/nvm/nvm.sh\" ] && \. \"${BREW_PREFIX}/opt/nvm/nvm.sh\"  # This loads nvm"
+  "[ -s \"${BREW_PREFIX}/opt/nvm/etc/bash_completion.d/nvm\" ] && \. \"${BREW_PREFIX}/opt/nvm/etc/bash_completion.d/nvm\"  # This loads nvm bash_completion"
+)
 for rc in "$ZSHENV" "$ZPROFILE" "$ZSHRC"; do
-  ensure_line_in_file 'export NVM_DIR="$HOME/.nvm"' "$rc"
-  ensure_line_in_file "[[ -s \"$NVM_SH\" ]] && \. \"$NVM_SH\"" "$rc"
-  ensure_line_in_file "[[ -s \"$NVM_COMPLETION\" ]] && \. \"$NVM_COMPLETION\"" "$rc"
+  for line in "${NVM_BLOCK_LINES[@]}"; do
+    ensure_line_in_file "$line" "$rc"
+  done
 done
 
 # Load nvm into current shell session
