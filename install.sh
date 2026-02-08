@@ -8,7 +8,7 @@ set -euo pipefail
 # Usage: curl -fsSL https://raw.githubusercontent.com/UncannyCorp/macos-dev-setup/main/install.sh | bash
 #
 # Notes:
-# - Assumes zsh (default on macOS). Modifies ~/.zprofile and ~/.zshrc.
+# - Assumes zsh (default on macOS). Modifies ~/.zshenv, ~/.zprofile, ~/.zshrc.
 ###############################################################################
 
 echo "==> Starting macOS dev environment setup..."
@@ -27,6 +27,7 @@ else
   BREW_PREFIX="/usr/local"
 fi
 
+ZSHENV="$HOME/.zshenv"
 ZPROFILE="$HOME/.zprofile"
 ZSHRC="$HOME/.zshrc"
 
@@ -108,13 +109,14 @@ fi
 echo "==> 6) Installing NVM (Node Version Manager)..."
 brew install nvm
 
-echo "==> 7) Configuring NVM in zsh (.zprofile + .zshrc so it works in every terminal)..."
+echo "==> 7) Configuring NVM in zsh (.zshenv, .zprofile, .zshrc so it works in every terminal)..."
 mkdir -p "$HOME/.nvm"
 
 NVM_SH="${BREW_PREFIX}/opt/nvm/nvm.sh"
 NVM_COMPLETION="${BREW_PREFIX}/opt/nvm/etc/bash_completion.d/nvm"
 
-for rc in "$ZPROFILE" "$ZSHRC"; do
+# .zshenv is read by every zsh (login + non-login), so NVM is always available
+for rc in "$ZSHENV" "$ZPROFILE" "$ZSHRC"; do
   ensure_line_in_file 'export NVM_DIR="$HOME/.nvm"' "$rc"
   ensure_line_in_file "[[ -s \"$NVM_SH\" ]] && \. \"$NVM_SH\"" "$rc"
   ensure_line_in_file "[[ -s \"$NVM_COMPLETION\" ]] && \. \"$NVM_COMPLETION\"" "$rc"
@@ -151,7 +153,7 @@ npm -v || true
 pnpm -v || true
 
 echo ""
-echo "✅ Done. NVM is configured in ~/.zprofile and ~/.zshrc."
+echo "✅ Done. NVM is configured in ~/.zshenv, ~/.zprofile, and ~/.zshrc."
 echo "Next steps:"
-echo " - Open Tabby (or a new terminal tab); nvm will be available automatically."
+echo " - Open a NEW terminal tab/window (or run: source ~/.zshenv) so nvm is available."
 echo " - If Xcode Command Line Tools were still installing, rerun this script afterward."
