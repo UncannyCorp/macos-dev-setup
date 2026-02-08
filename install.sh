@@ -39,6 +39,17 @@ ensure_line_in_file() {
   fi
 }
 
+# Skip cask install if already installed (via brew or present in /Applications)
+install_cask_if_missing() {
+  local cask="$1"
+  local app_name="$2"
+  if brew list --cask "$cask" &>/dev/null || [[ -d "/Applications/$app_name" ]]; then
+    echo "    $cask already installed, skipping."
+    return 0
+  fi
+  brew install --cask "$cask"
+}
+
 echo "==> 0) Xcode Command Line Tools (if needed)..."
 if ! xcode-select -p >/dev/null 2>&1; then
   xcode-select --install || true
@@ -73,10 +84,19 @@ brew install \
   gnupg \
   openssl@3
 
+echo "==> 3b) Configuring PATH and env for keg-only tools (curl, unzip)..."
+ensure_line_in_file "export PATH=\"${BREW_PREFIX}/opt/curl/bin:\$PATH\"" "$ZSHRC"
+ensure_line_in_file "export PATH=\"${BREW_PREFIX}/opt/unzip/bin:\$PATH\"" "$ZSHRC"
+ensure_line_in_file "export LDFLAGS=\"-L${BREW_PREFIX}/opt/curl/lib\"" "$ZSHRC"
+ensure_line_in_file "export CPPFLAGS=\"-I${BREW_PREFIX}/opt/curl/include\"" "$ZSHRC"
+# Apply in current shell so later steps see curl/unzip
+export PATH="${BREW_PREFIX}/opt/curl/bin:${BREW_PREFIX}/opt/unzip/bin:$PATH"
+export LDFLAGS="-L${BREW_PREFIX}/opt/curl/lib"
+export CPPFLAGS="-I${BREW_PREFIX}/opt/curl/include"
+
 echo "==> 4) Installing GUI apps (casks)..."
-brew install --cask \
-  github \
-  tabby
+install_cask_if_missing github "GitHub Desktop.app"
+install_cask_if_missing tabby "Tabby.app"
 
 echo "==> 5) Installing Colima + Docker CLI (no Docker Desktop)..."
 brew install colima docker docker-compose
@@ -88,14 +108,17 @@ fi
 echo "==> 6) Installing NVM (Node Version Manager)..."
 brew install nvm
 
-echo "==> 7) Configuring NVM in zsh..."
+echo "==> 7) Configuring NVM in zsh (.zprofile + .zshrc so it works in every terminal)..."
 mkdir -p "$HOME/.nvm"
 
-ensure_line_in_file 'export NVM_DIR="$HOME/.nvm"' "$ZSHRC"
-ensure_line_in_file '[[ -s "/opt/homebrew/opt/nvm/nvm.sh" ]] && . "/opt/homebrew/opt/nvm/nvm.sh"' "$ZSHRC"
-ensure_line_in_file '[[ -s "/usr/local/opt/nvm/nvm.sh" ]] && . "/usr/local/opt/nvm/nvm.sh"' "$ZSHRC"
-ensure_line_in_file '[[ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ]] && . "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"' "$ZSHRC"
-ensure_line_in_file '[[ -s "/usr/local/opt/nvm/etc/bash_completion.d/nvm" ]] && . "/usr/local/opt/nvm/etc/bash_completion.d/nvm"' "$ZSHRC"
+NVM_SH="${BREW_PREFIX}/opt/nvm/nvm.sh"
+NVM_COMPLETION="${BREW_PREFIX}/opt/nvm/etc/bash_completion.d/nvm"
+
+for rc in "$ZPROFILE" "$ZSHRC"; do
+  ensure_line_in_file 'export NVM_DIR="$HOME/.nvm"' "$rc"
+  ensure_line_in_file "[[ -s \"$NVM_SH\" ]] && \. \"$NVM_SH\"" "$rc"
+  ensure_line_in_file "[[ -s \"$NVM_COMPLETION\" ]] && \. \"$NVM_COMPLETION\"" "$rc"
+done
 
 # Load nvm into current shell session
 export NVM_DIR="$HOME/.nvm"
@@ -128,8 +151,7 @@ npm -v || true
 pnpm -v || true
 
 echo ""
-echo "✅ Done."
+echo "✅ Done. NVM is configured in ~/.zprofile and ~/.zshrc."
 echo "Next steps:"
-echo " - Open Tabby from Applications."
-echo " - Restart your terminal (or run: source ~/.zshrc) so nvm is always available."
+echo " - Open Tabby (or a new terminal tab); nvm will be available automatically."
 echo " - If Xcode Command Line Tools were still installing, rerun this script afterward."

@@ -16,13 +16,43 @@
     }
     h1 { font-size: 1.75rem; margin-top: 0; }
     .subtitle { color: #57606a; margin-bottom: 1.5rem; }
+    .code-block {
+      position: relative;
+      margin: 0;
+    }
     pre {
       background: #f6f8fa;
       border: 1px solid #d0d7de;
       border-radius: 6px;
       padding: 1rem;
+      padding-top: 2.25rem;
       overflow-x: auto;
       font-size: 0.9rem;
+      margin: 0;
+    }
+    .copy-btn {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      width: 28px;
+      height: 28px;
+      padding: 4px;
+      border: 1px solid #d0d7de;
+      border-radius: 6px;
+      background: #f6f8fa;
+      cursor: pointer;
+      color: #57606a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s, color 0.15s;
+    }
+    .copy-btn:hover {
+      background: #eaeef2;
+      color: #24292f;
+    }
+    .copy-btn.copied {
+      color: #1a7f37;
     }
     code { font-family: ui-monospace, monospace; }
     .note { font-size: 0.9rem; color: #57606a; margin-top: 0.5rem; }
@@ -38,12 +68,21 @@
   <p class="subtitle">Dev environment setup on macOS: CLI tools, Tabby, Docker (Colima), Node.js 24, pnpm. Uses Homebrew.</p>
 
   <h2>Requirements</h2>
-  <p>Homebrew (install first if needed):</p>
-  <pre><code>/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"</code></pre>
+  <p>Homebrew (install first if not installed yet):</p>
+  <div class="code-block">
+    <button type="button" class="copy-btn" title="Copy" aria-label="Copy code">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+    </button>
+    <pre><code>/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"</code></pre>
+  </div>
 
   <h2>Installation</h2>
-  <p>Replace <code>UncannyCorp</code> with your GitHub username or org:</p>
-  <pre><code>curl -fsSL https://raw.githubusercontent.com/UncannyCorp/macos-dev-setup/main/install.sh | bash</code></pre>
+  <div class="code-block">
+    <button type="button" class="copy-btn" title="Copy" aria-label="Copy code">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+    </button>
+    <pre><code>curl -fsSL https://raw.githubusercontent.com/UncannyCorp/macos-dev-setup/main/install.sh | bash</code></pre>
+  </div>
 
   <h2>What gets installed</h2>
   <ul>
@@ -59,5 +98,22 @@
     <a href="https://github.com/UncannyCorp/macos-dev-setup/blob/main/README.md">README</a>
     All rights reserved. &copy; 2026 UncannyCorp
   </p>
+  <script>
+    document.querySelectorAll('.code-block').forEach(function (block) {
+      var btn = block.querySelector('.copy-btn');
+      var code = block.querySelector('code');
+      if (!btn || !code) return;
+      btn.addEventListener('click', function () {
+        navigator.clipboard.writeText(code.textContent).then(function () {
+          btn.classList.add('copied');
+          btn.setAttribute('title', 'Copied!');
+          setTimeout(function () {
+            btn.classList.remove('copied');
+            btn.setAttribute('title', 'Copy');
+          }, 1500);
+        });
+      });
+    });
+  </script>
 </body>
 </html>
