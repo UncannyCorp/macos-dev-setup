@@ -1,5 +1,7 @@
 # 🍎 macOS Dev Setup
 
+[![GitHub Repo stars](https://img.shields.io/github/stars/UncannyCorp/macos-dev-setup?style=social)](https://github.com/UncannyCorp/macos-dev-setup)
+
 Dev environment setup on macOS: CLI tools, Tabby, Docker (Colima), Node.js 24, pnpm. Uses Homebrew.
 
 ---
@@ -46,4 +48,4 @@ The script may trigger Xcode Command Line Tools; complete that, then re-run if n
 
 ## Documentation
 
-[GitHub Pages](https://UncannyCorp.github.io/macos-dev-setup/) (replace `UncannyCorp` with the repo owner).
+[GitHub Pages](https://UncannyCorp.github.io/macos-dev-setup/) `UncannyCorp`
